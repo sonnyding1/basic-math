@@ -33,18 +33,19 @@ export default function Home() {
             id='answer' 
             type='number'
             className='text-4xl font-bold w-20 flex-grow-0 flex-shrink-1'
-            onKeyUp={(e) => {
-            // if key is enter
-            if (e.keyCode !== 13) {
-              return;
-            }
-            const value = parseInt((document.getElementById('answer') as HTMLInputElement).value);
-            if (value === answer) {
-              setIsCorrect(true);
-            }
-            setIsSolved(true);
-            (document.getElementById('next') as HTMLInputElement).focus();
-          }} />
+            onKeyDown={(e) => {
+              // if key is enter
+              if (e.keyCode !== 13) {
+                return;
+              }
+              const value = parseInt((document.getElementById('answer') as HTMLInputElement).value);
+              if (value === answer) {
+                setIsCorrect(true);
+              }
+              setIsSolved(true);
+              (document.getElementById('next') as HTMLInputElement).focus();
+            }}
+          />
         </div>
         <div className={cn('flex flex-col items-center gap-8', isSolved? '': 'invisible')}>
           {isCorrect && <p>Correct!</p>}
@@ -58,6 +59,7 @@ export default function Home() {
             (document.getElementById('answer') as HTMLInputElement).value = '';
             setIsCorrect(false);
             setIsSolved(false);
+            (document.getElementById('answer') as HTMLInputElement).focus();
           }}>
             Next
           </Button>
