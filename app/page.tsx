@@ -1,11 +1,13 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { assignProblem } from '@/lib/problems';
 import { cn } from '@/lib/utils';
-import { Divide } from 'lucide-react';
-import Image from 'next/image'
+import { Wrench } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Home() {
@@ -14,8 +16,10 @@ export default function Home() {
   const [isCorrect, setIsCorrect] = useState(false);
   const [isSolved, setIsSolved] = useState(false);
 
+  const [includeNegative, setIncludeNegative] = useState(false);
+
   useEffect(() => {
-    const { problemString, problemAnswer } = assignProblem();
+    const { problemString, problemAnswer } = assignProblem(includeNegative);
     setProblem(problemString);
     setAnswer(problemAnswer);
     (document.getElementById('answer') as HTMLInputElement).focus();
@@ -23,7 +27,39 @@ export default function Home() {
 
   return (
     <div className='flex flex-col h-screen'>
-      <h1 className='p-4 text-4xl font-bold'>Arithmetics</h1>
+      {/* navbar */}
+      <div className='p-4 flex justify-between'>
+        <h1 className='text-4xl font-bold'>Arithmetics</h1>
+        <Sheet>
+          <SheetTrigger>
+            <Wrench className='w-10 h-10 hover:bg-gray-300 rounded-md p-2 transition' />
+          </SheetTrigger>
+          <SheetContent>
+            <SheetHeader>
+              <SheetTitle>
+                Configurations
+              </SheetTitle>
+              <SheetDescription>
+                Change the difficulty of the problems that you want to solve.
+              </SheetDescription>
+            </SheetHeader>
+            <div className='flex flex-col pt-4'>
+              <div className='flex gap-2 items-center'>
+                <Checkbox 
+                  id='include-negative'
+                  checked={includeNegative}
+                  onClick={() => {
+                  setIncludeNegative(!includeNegative);
+                  const { problemString, problemAnswer } = assignProblem(includeNegative);
+                  setProblem(problemString);
+                  setAnswer(problemAnswer);
+                }} />
+                <label htmlFor="include-negative">Include negative numbers</label>
+              </div>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
 
       <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
         <div className='flex items-center justify-center gap-2 py-16'>
@@ -53,7 +89,7 @@ export default function Home() {
           <Button 
             id='next'
             onClick={() => {
-            const { problemString, problemAnswer } = assignProblem();
+            const { problemString, problemAnswer } = assignProblem(includeNegative);
             setProblem(problemString);
             setAnswer(problemAnswer);
             (document.getElementById('answer') as HTMLInputElement).value = '';
