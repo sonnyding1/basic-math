@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { assignProblem } from '@/lib/problems';
 import { cn } from '@/lib/utils';
-import { Wrench } from 'lucide-react';
+import { Menu, Wrench } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -29,6 +29,22 @@ export default function Home() {
     <div className='flex flex-col h-screen'>
       {/* navbar */}
       <div className='p-4 flex justify-between'>
+        {/* menu bar */}
+        <Sheet>
+          <SheetTrigger>
+            <Menu className='w-10 h-10 hover:bg-gray-300 rounded-md p-2 transition' />
+          </SheetTrigger>
+          <SheetContent side="left">
+            <SheetHeader>
+              <SheetTitle>
+                Menu
+              </SheetTitle>
+            </SheetHeader>
+            <div className='flex flex-col pt-4'>
+              
+            </div>
+          </SheetContent>
+        </Sheet>
         <h1 className='text-4xl font-bold'>Arithmetics</h1>
         <Sheet>
           <SheetTrigger>
@@ -68,7 +84,7 @@ export default function Home() {
           <Input 
             id='answer' 
             type='number'
-            className='text-4xl font-bold w-20 flex-grow-0 flex-shrink-1'
+            className='text-4xl font-bold w-24 flex-grow-0 flex-shrink-1'
             onKeyDown={(e) => {
               // if key is enter
               if (e.keyCode !== 13) {
