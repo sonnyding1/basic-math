@@ -117,6 +117,21 @@ export default function Home() {
           </Button>
         </div>
       </div>
+
+      <div className='absolute bottom-0 left-0 flex flex-col p-8'>
+              <div className='flex gap-2 items-center'>
+                <Checkbox 
+                  id='include-negative'
+                  checked={includeNegative}
+                  onClick={() => {
+                  setIncludeNegative(!includeNegative);
+                  const { problemString, problemAnswer } = assignProblem(!includeNegative);
+                  setProblem(problemString);
+                  setAnswer(problemAnswer);
+                }} />
+                <label htmlFor="include-negative">Include negative numbers</label>
+              </div>
+            </div>
     </div>
   )
 }
