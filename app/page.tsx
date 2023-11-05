@@ -41,8 +41,8 @@ export default function Home() {
             const value = parseInt((document.getElementById('answer') as HTMLInputElement).value);
             if (value === answer) {
               setIsCorrect(true);
-              setIsSolved(true);
             }
+            setIsSolved(true);
             (document.getElementById('next') as HTMLInputElement).focus();
           }} />
         </div>
@@ -62,32 +62,6 @@ export default function Home() {
             Next
           </Button>
         </div>
-        {/* {isCorrect && isSolved && <div className='flex flex-col items-center gap-8'>
-            <p>Correct!</p>
-            <Button onClick={() => {
-              const { problemString, problemAnswer } = assignProblem();
-              setProblem(problemString);
-              setAnswer(problemAnswer);
-              (document.getElementById('answer') as HTMLInputElement).value = '';
-              setIsCorrect(false);
-              setIsSolved(false);
-            }}>
-              Next
-            </Button>
-          </div>}
-          {!isCorrect && isSolved && <div className='flex flex-col items-center gap-8'>
-            <p>Incorrect! Answer is {answer}.</p>
-            <Button onClick={() => {
-              const { problemString, problemAnswer } = assignProblem();
-              setProblem(problemString);
-              setAnswer(problemAnswer);
-              (document.getElementById('answer') as HTMLInputElement).value = '';
-              setIsCorrect(false);
-              setIsSolved(false);
-            }}>
-              Next
-            </Button>
-          </div>} */}
       </div>
     </div>
   )
