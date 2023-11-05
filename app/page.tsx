@@ -50,7 +50,7 @@ export default function Home() {
                   checked={includeNegative}
                   onClick={() => {
                   setIncludeNegative(!includeNegative);
-                  const { problemString, problemAnswer } = assignProblem(includeNegative);
+                  const { problemString, problemAnswer } = assignProblem(!includeNegative);
                   setProblem(problemString);
                   setAnswer(problemAnswer);
                 }} />
