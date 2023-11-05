@@ -7,7 +7,9 @@ import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import { assignProblem } from '@/lib/problems';
 import { cn } from '@/lib/utils';
+import { UserButton, useAuth } from '@clerk/nextjs';
 import { Menu, Wrench } from 'lucide-react';
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -18,6 +20,8 @@ export default function Home() {
   const [isSolved, setIsSolved] = useState(false);
 
   const [includeNegative, setIncludeNegative] = useState(false);
+
+  const auth = useAuth();
 
   useEffect(() => {
     const { problemString, problemAnswer } = assignProblem(includeNegative);
@@ -30,26 +34,35 @@ export default function Home() {
     <div className='flex flex-col h-screen'>
       {/* navbar */}
       <div className='p-4 flex justify-between'>
-        {/* menu bar */}
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button variant='outline' size='icon'>
-              <Menu className='h-[1.2rem] w-[1.2rem]' />
-            </Button>
-          </SheetTrigger>
-          <SheetContent side="left">
-            <SheetHeader>
-              <SheetTitle>
-                Menu
-              </SheetTitle>
-            </SheetHeader>
-            <div className='flex flex-col pt-4'>
-              
-            </div>
-          </SheetContent>
-        </Sheet>
-        <h1 className='text-4xl font-bold'>Arithmetics</h1>
-        <DarkModeToggle />
+        <div className='flex gap-4 items-center'>
+          {/* menu bar */}
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant='outline' size='icon'>
+                <Menu className='h-[1.2rem] w-[1.2rem]' />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left">
+              <SheetHeader>
+                <SheetTitle>
+                  Menu
+                </SheetTitle>
+              </SheetHeader>
+              <div className='flex flex-col pt-4'>
+                
+              </div>
+            </SheetContent>
+          </Sheet>
+          <h1 className='text-4xl font-bold'>Arithmetics</h1>
+        </div>
+        <div className='flex gap-4 items-center'>
+          <DarkModeToggle />
+          {auth.isSignedIn && <UserButton afterSignOutUrl='/' />}
+          {!auth.isSignedIn && 
+            <Link href={'/sign-in'}>
+              <Button>Sign In</Button>
+            </Link>}
+        </div>
       </div>
 
       <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
