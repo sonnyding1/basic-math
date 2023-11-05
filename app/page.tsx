@@ -1,5 +1,6 @@
 'use client';
 
+import { DarkModeToggle } from '@/components/dark-mode-toggle';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -31,8 +32,10 @@ export default function Home() {
       <div className='p-4 flex justify-between'>
         {/* menu bar */}
         <Sheet>
-          <SheetTrigger>
-            <Menu className='w-10 h-10 hover:bg-gray-300 rounded-md p-2 transition' />
+          <SheetTrigger asChild>
+            <Button variant='outline' size='icon'>
+              <Menu className='h-[1.2rem] w-[1.2rem]' />
+            </Button>
           </SheetTrigger>
           <SheetContent side="left">
             <SheetHeader>
@@ -46,35 +49,7 @@ export default function Home() {
           </SheetContent>
         </Sheet>
         <h1 className='text-4xl font-bold'>Arithmetics</h1>
-        <Sheet>
-          <SheetTrigger>
-            <Wrench className='w-10 h-10 hover:bg-gray-300 rounded-md p-2 transition' />
-          </SheetTrigger>
-          <SheetContent>
-            <SheetHeader>
-              <SheetTitle>
-                Configurations
-              </SheetTitle>
-              <SheetDescription>
-                Change the difficulty of the problems that you want to solve.
-              </SheetDescription>
-            </SheetHeader>
-            <div className='flex flex-col pt-4'>
-              <div className='flex gap-2 items-center'>
-                <Checkbox 
-                  id='include-negative'
-                  checked={includeNegative}
-                  onClick={() => {
-                  setIncludeNegative(!includeNegative);
-                  const { problemString, problemAnswer } = assignProblem(!includeNegative);
-                  setProblem(problemString);
-                  setAnswer(problemAnswer);
-                }} />
-                <label htmlFor="include-negative">Include negative numbers</label>
-              </div>
-            </div>
-          </SheetContent>
-        </Sheet>
+        <DarkModeToggle />
       </div>
 
       <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
