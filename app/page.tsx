@@ -21,6 +21,7 @@ export default function Home() {
   const [isAttempted, setIsAttempted] = useState(false);
 
   const [includeNegative, setIncludeNegative] = useState(false);
+  const [includeTwoDigit, setIncludeTwoDigit] = useState(false);
   const [numberSolved, setNumberSolved] = useState(0);
 
   const { userId } = useAuth();
@@ -35,7 +36,7 @@ export default function Home() {
       getNumberSolved();
     }
 
-    const { problemString, problemAnswer } = assignProblem(includeNegative);
+    const { problemString, problemAnswer } = assignProblem(includeNegative, includeTwoDigit);
     setProblem(problemString);
     setAnswer(problemAnswer);
     (document.getElementById('answer') as HTMLInputElement).focus();
@@ -100,7 +101,7 @@ export default function Home() {
           <Input 
             id='answer' 
             type='number'
-            className='text-4xl font-bold w-24 flex-grow-0 flex-shrink-1'
+            className={cn('text-4xl font-bold flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-32': 'w-24')}
             onKeyDown={(e) => {
               // if key is enter
               if (e.keyCode !== 13) {
@@ -122,7 +123,7 @@ export default function Home() {
           <Button 
             id='next'
             onClick={() => {
-              const { problemString, problemAnswer } = assignProblem(includeNegative);
+              const { problemString, problemAnswer } = assignProblem(includeNegative, includeTwoDigit);
               setProblem(problemString);
               setAnswer(problemAnswer);
               (document.getElementById('answer') as HTMLInputElement).value = '';
@@ -142,11 +143,23 @@ export default function Home() {
             checked={includeNegative}
             onClick={() => {
             setIncludeNegative(!includeNegative);
-            const { problemString, problemAnswer } = assignProblem(!includeNegative);
+            const { problemString, problemAnswer } = assignProblem(!includeNegative, includeTwoDigit);
             setProblem(problemString);
             setAnswer(problemAnswer);
           }} />
           <label htmlFor="include-negative">Include negative numbers</label>
+        </div>
+        <div className='flex gap-2 items-center'>
+          <Checkbox 
+            id='include-two-digit'
+            checked={includeTwoDigit}
+            onClick={() => {
+            setIncludeTwoDigit(!includeTwoDigit);
+            const { problemString, problemAnswer } = assignProblem(includeNegative, !includeTwoDigit);
+            setProblem(problemString);
+            setAnswer(problemAnswer);
+          }} />
+          <label htmlFor="include-negative">Include 2 digit numbers</label>
         </div>
       </div>
     </div>
