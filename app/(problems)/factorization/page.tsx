@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { assignFactorizationProblem, evalFactorizationProblem } from "@/lib/problems";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
-import { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Checkbox } from '@/components/ui/checkbox';
 
 export default function FactorizationPage() {
@@ -21,6 +21,26 @@ export default function FactorizationPage() {
     const [numberSolved, setNumberSolved] = useState(0);
 
     const { userId } = useAuth();
+
+    const typeset = (selector: () => HTMLElement) => {
+        const mathJax = (window as any).MathJax;
+        // If MathJax script hasn't been loaded yet, then do nothing.
+        if (!mathJax) {
+            return null;
+        }
+        mathJax.startup.promise = mathJax.startup.promise
+            .then(() => {
+            selector();
+            return mathJax.typesetPromise();
+            })
+            .catch((err: any) => console.error(`Typeset failed: ${err.message}`));
+        return mathJax.startup.promise;
+    };
+
+    const ref = React.createRef<HTMLSpanElement>();
+    React.useEffect(() => {
+        typeset(() => ref.current!);
+    }, [problem]);
 
     // init
     useEffect(() => {
@@ -47,6 +67,7 @@ export default function FactorizationPage() {
         updateNumberSolved();
         }
     }, [numberSolved]);
+    
 
     return (
         <div className='flex flex-col h-screen'>
@@ -60,8 +81,7 @@ export default function FactorizationPage() {
 
             <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
                 <div className='flex items-center justify-center gap-2 py-16'>
-                <p>{problem}</p>
-                <p> = </p>
+                <p>{'$$'+problem+'=$$'}</p>
                 <Input
                     id='answer' 
                     type='string'
