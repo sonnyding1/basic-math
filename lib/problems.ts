@@ -1,4 +1,4 @@
-export function assignProblem(includeNegative: boolean, includeTwoDigit: boolean) {
+export function assignAdditionProblem(includeNegative: boolean, includeTwoDigit: boolean) {
     var sign = 1;
     const range = includeTwoDigit ? 100 : 10;
     sign = includeNegative && Math.random() > 0.5 ? -1 : 1;

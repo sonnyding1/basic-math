@@ -43,7 +43,7 @@ export default function AdditionPage() {
     async function updateNumberSolved() {
       await axios.post('/api/solve-count', { numberSolved });
     }
-    if (userId) {
+    if (userId && numberSolved > 0) {
       updateNumberSolved();
     }
   }, [numberSolved]);
