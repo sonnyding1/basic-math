@@ -1,3 +1,7 @@
+import 'mathlive'
+import Script from 'next/script'
+
+
 export default function ProblemsLayout({
     children,
   }: {
@@ -5,6 +9,7 @@ export default function ProblemsLayout({
   }) {
     return (
       <div>
+        <Script src='//unpkg.com/mathlive' />
         {children}
       </div>
     )
