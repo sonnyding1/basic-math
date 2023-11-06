@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { assignAdditionProblem } from '@/lib/problems';
 import { cn } from '@/lib/utils';
 import { UserButton, useAuth } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Navbar from '@/components/navbar';
 
 export default function AdditionPage() {
@@ -21,6 +21,26 @@ export default function AdditionPage() {
   const [numberSolved, setNumberSolved] = useState(0);
 
   const { userId } = useAuth();
+
+  const typeset = (selector: () => HTMLElement) => {
+    const mathJax = (window as any).MathJax;
+    // If MathJax script hasn't been loaded yet, then do nothing.
+    if (!mathJax) {
+        return null;
+    }
+    mathJax.startup.promise = mathJax.startup.promise
+        .then(() => {
+        selector();
+        return mathJax.typesetPromise();
+        })
+        .catch((err: any) => console.error(`Typeset failed: ${err.message}`));
+    return mathJax.startup.promise;
+  };
+
+  const ref = React.createRef<HTMLSpanElement>();
+  useEffect(() => {
+      typeset(() => ref.current!);
+  }, [problem, answer]);
 
   // init
   useEffect(() => {
@@ -58,10 +78,9 @@ export default function AdditionPage() {
             <p>{numberSolved}</p>
       </div>
 
-      <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
-        <div className='flex items-center justify-center gap-2 py-16'>
-          <p>{problem}</p>
-          <p> = </p>
+      <div className='p-4 flex flex-col items-center justify-center gap-2 text-4xl font-bold'>
+        <div className='flex items-center justify-center gap-2 mt-32'>
+          <p>{'$$'+problem+'=$$'}</p>
           <Input 
             id='answer' 
             type='number'
@@ -82,11 +101,17 @@ export default function AdditionPage() {
           />
           {/* <math-field></math-field> */}
         </div>
-        <div className={cn('flex flex-col items-center gap-8', isAttempted? '': 'invisible')}>
-          {isCorrect && <p>Correct!</p>}
-          {!isCorrect && <p>Incorrect! Answer is {answer}.</p>}
+        <div className={cn('flex flex-col items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
+          {isCorrect && <p className='my-2'>Correct!</p>}
+          {!isCorrect && <div className='flex items-center'>
+              <p>Incorrect! Answer is &nbsp;</p>
+              <p>{'$$'+answer+'$$'}</p>
+              <p>.</p>
+            </div>
+          }
           <Button 
             id='next'
+            variant='outline'
             onClick={() => {
               const { problemString, problemAnswer } = assignAdditionProblem(includeNegative, includeTwoDigit);
               setProblem(problemString);

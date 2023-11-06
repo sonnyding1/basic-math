@@ -38,9 +38,9 @@ export default function FactorizationPage() {
     };
 
     const ref = React.createRef<HTMLSpanElement>();
-    React.useEffect(() => {
+    useEffect(() => {
         typeset(() => ref.current!);
-    }, [problem]);
+    }, [problem, answer]);
 
     // init
     useEffect(() => {
@@ -79,13 +79,13 @@ export default function FactorizationPage() {
                     <p>{numberSolved}</p>
             </div>
 
-            <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
-                <div className='flex items-center justify-center gap-2 py-16'>
+            <div className='p-4 flex flex-col items-center justify-center gap-2 text-4xl font-bold'>
+                <div className='flex items-center justify-center gap-2 mt-32'>
                 <p>{'$$'+problem+'=$$'}</p>
                 <Input
                     id='answer' 
                     type='string'
-                    className={cn('text-4xl font-bold flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-64': 'w-64')}
+                    className={cn('text-4xl font-bold', includeTwoDigit? 'w-64': 'w-64')}
                     onKeyDown={(e) => {
                     // if key is enter
                     if (e.keyCode !== 13) {
@@ -101,22 +101,29 @@ export default function FactorizationPage() {
                     }}
                 />
                 </div>
-                <div className={cn('flex flex-col items-center gap-8', isAttempted? '': 'invisible')}>
-                {isCorrect && <p>Correct!</p>}
-                {!isCorrect && <p>Incorrect! Answer is {answer}.</p>}
-                <Button
-                    id='next'
-                    onClick={() => {
-                    const { problemString, problemAnswer } = assignFactorizationProblem(includeNegative, includeTwoDigit);
-                    setProblem(problemString);
-                    setAnswer(problemAnswer);
-                    (document.getElementById('answer') as HTMLInputElement).value = '';
-                    setIsCorrect(false);
-                    setIsAttempted(false);
-                    (document.getElementById('answer') as HTMLInputElement).focus();
-                }}>
-                    Next
-                </Button>
+                <div className={cn('flex flex-col items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
+                    {isCorrect && <p>Correct!</p>}
+                    {!isCorrect && <div className='flex items-center'>
+                        <p>Incorrect! Answer is &nbsp;</p>
+                        <p>{'$$'+answer+'$$'}</p>
+                        <p>.</p>
+                    </div>
+                    }
+                    {/* {!isCorrect && <p>Incorrect! Answer is &nbsp;{answer}.</p>} */}
+                    <Button
+                        id='next'
+                        variant='outline'
+                        onClick={() => {
+                        const { problemString, problemAnswer } = assignFactorizationProblem(includeNegative, includeTwoDigit);
+                        setProblem(problemString);
+                        setAnswer(problemAnswer);
+                        (document.getElementById('answer') as HTMLInputElement).value = '';
+                        setIsCorrect(false);
+                        setIsAttempted(false);
+                        (document.getElementById('answer') as HTMLInputElement).focus();
+                    }}>
+                        Next
+                    </Button>
                 </div>
             </div>
 
