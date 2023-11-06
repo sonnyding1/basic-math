@@ -4,7 +4,7 @@ import axios from 'axios';
 import Navbar from "@/components/navbar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { assignFactorizationProblem } from "@/lib/problems";
+import { assignFactorizationProblem, evalFactorizationProblem } from "@/lib/problems";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@clerk/nextjs";
 import { useEffect, useState } from "react";
@@ -65,14 +65,14 @@ export default function FactorizationPage() {
                 <Input
                     id='answer' 
                     type='string'
-                    className={cn('text-4xl font-bold flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-32': 'w-24')}
+                    className={cn('text-4xl font-bold flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-64': 'w-64')}
                     onKeyDown={(e) => {
                     // if key is enter
                     if (e.keyCode !== 13) {
                         return;
                     }
                     const value = (document.getElementById('answer') as HTMLInputElement).value;
-                    if (value === answer && !isCorrect) {
+                    if (evalFactorizationProblem(problem, value) && !isCorrect) {
                         setIsCorrect(true);
                         setNumberSolved(numberSolved + 1);
                     }

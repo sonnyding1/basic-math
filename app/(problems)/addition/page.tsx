@@ -80,7 +80,7 @@ export default function AdditionPage() {
               (document.getElementById('next') as HTMLInputElement).focus();
             }}
           />
-          <math-field></math-field>
+          {/* <math-field></math-field> */}
         </div>
         <div className={cn('flex flex-col items-center gap-8', isAttempted? '': 'invisible')}>
           {isCorrect && <p>Correct!</p>}
