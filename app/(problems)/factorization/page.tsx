@@ -10,7 +10,6 @@ import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/navbar';
 import Script from 'next/script';
-import "//unpkg.com/mathlive";
 // import MathField from 'math-field';
 
 export default function FactorizationPage() {
@@ -47,7 +46,7 @@ export default function FactorizationPage() {
   }, [problem, answer]);
 
   // init
-  const mf = useRef();
+  const mf = useRef() as any;
   useEffect(() => {
     async function getNumberSolved() {
       const numberSolved = await axios.get('/api/solve-count');
@@ -119,7 +118,6 @@ export default function FactorizationPage() {
               id='answer'
               ref={mf}
               onInput={(e: React.ChangeEvent<HTMLInputElement> ) => {setUserAnswer(e.target.value)}}
-              // onInput={(e: { target: { getValue: () => React.SetStateAction<number>; }; }) => {setUserAnswer(e.target.getValue())}}
             >
               {userAnswer}
             </math-field>

@@ -10,7 +10,6 @@ import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/navbar';
 import Script from 'next/script';
-import "//unpkg.com/mathlive";
 
 export default function AdditionPage() {
   const [problem, setProblem] = useState('');
@@ -47,7 +46,7 @@ export default function AdditionPage() {
 
 
   // init
-  const mf = useRef();
+  const mf = useRef() as any;
   useEffect(() => {
     async function getNumberSolved() {
       const numberSolved = await axios.get('/api/solve-count');
@@ -119,7 +118,7 @@ export default function AdditionPage() {
             <math-field
               id='answer'
               ref={mf}
-              onInput={(e: { target: { getValue: () => React.SetStateAction<number>; }; }) => {setUserAnswer(e.target.getValue())}}
+              onInput={(e: React.ChangeEvent<HTMLInputElement> ) => {setUserAnswer(e.target.value)}}
             >
               {userAnswer}
             </math-field>
@@ -165,7 +164,7 @@ export default function AdditionPage() {
             }}
           >Submit</Button>
         </div>
-        <div className={cn('flex flex-col items-center gap-8', isAttempted? '': 'invisible')}>
+        <div className={cn('flex flex-col items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
           {isCorrect && <p>Correct!</p>}
           {!isCorrect && <p>Incorrect! Answer is {answer}.</p>}
           <Button 
