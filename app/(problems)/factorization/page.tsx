@@ -10,6 +10,8 @@ import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/navbar';
 import Script from 'next/script';
+import "//unpkg.com/mathlive";
+// import MathField from 'math-field';
 
 export default function FactorizationPage() {
   const [problem, setProblem] = useState('');
@@ -101,7 +103,6 @@ export default function FactorizationPage() {
 
   return (
     <div className='flex flex-col h-screen'>
-      <Script src='//unpkg.com/mathlive' />
       <Navbar title='Factorization' />
 
       {/* counter */}
@@ -117,7 +118,8 @@ export default function FactorizationPage() {
             <math-field
               id='answer'
               ref={mf}
-              onInput={(e: { target: { getValue: () => React.SetStateAction<number>; }; }) => {setUserAnswer(e.target.getValue())}}
+              onInput={(e: React.ChangeEvent<HTMLInputElement> ) => {setUserAnswer(e.target.value)}}
+              // onInput={(e: { target: { getValue: () => React.SetStateAction<number>; }; }) => {setUserAnswer(e.target.getValue())}}
             >
               {userAnswer}
             </math-field>

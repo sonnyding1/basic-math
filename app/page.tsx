@@ -2,12 +2,12 @@
 
 import Script from "next/script";
 import { useState } from "react";
+import "//unpkg.com/mathlive";
 
 function App() {
   const [value, setValue] = useState("");
   return (
     <div className="App">
-      <Script src="https://unpkg.com/mathlive/dist/mathlive.min.js" />
       <h1>MathLive with React</h1>
       <math-field onInput={(evt) => setValue(evt.target.value)} >
         {value}

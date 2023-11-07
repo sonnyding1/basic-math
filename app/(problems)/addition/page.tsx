@@ -10,6 +10,7 @@ import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/navbar';
 import Script from 'next/script';
+import "//unpkg.com/mathlive";
 
 export default function AdditionPage() {
   const [problem, setProblem] = useState('');
