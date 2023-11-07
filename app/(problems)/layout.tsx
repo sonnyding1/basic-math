@@ -9,8 +9,7 @@ export default function ProblemsLayout({
   }) {
     return (
       <div>
-        <Script src='//unpkg.com/mathlive' />
-        <Script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" />
+        {/* <Script src='//unpkg.com/mathlive' /> */}
         {children}
       </div>
     )

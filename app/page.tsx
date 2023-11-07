@@ -7,12 +7,14 @@ import { Input } from '@/components/ui/input';
 import { assignAdditionProblem } from '@/lib/problems';
 import { cn } from '@/lib/utils';
 import { UserButton, useAuth } from '@clerk/nextjs';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/navbar';
+import Script from 'next/script';
 
-export default function AdditionPage() {
+export default function Home() {
   const [problem, setProblem] = useState('');
   const [answer, setAnswer] = useState(0);
+  const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
 
@@ -22,7 +24,29 @@ export default function AdditionPage() {
 
   const { userId } = useAuth();
 
+  const typeset = (selector: () => HTMLElement) => {
+    const mathJax = (window as any).MathJax;
+    // If MathJax script hasn't been loaded yet, then do nothing.
+    if (!mathJax) {
+        return null;
+    }
+    mathJax.startup.promise = mathJax.startup.promise
+        .then(() => {
+        selector();
+        return mathJax.typesetPromise();
+        })
+        .catch((err: any) => console.error(`Typeset failed: ${err.message}`));
+    return mathJax.startup.promise;
+  };
+
+  const ref = React.createRef<HTMLSpanElement>();
+  useEffect(() => {
+      typeset(() => ref.current!);
+  }, [problem, answer]);
+
+
   // init
+  const mf = useRef() as any;
   useEffect(() => {
     async function getNumberSolved() {
       const numberSolved = await axios.get('/api/solve-count');
@@ -43,14 +67,42 @@ export default function AdditionPage() {
     async function updateNumberSolved() {
       await axios.post('/api/solve-count', { numberSolved });
     }
-    if (userId) {
+    if (userId && numberSolved > 0) {
       updateNumberSolved();
     }
   }, [numberSolved]);
 
+  // useEffect(() => {
+  //   const handleKeyPress = (event: KeyboardEvent) => {
+  //     if (event.key !== 'Enter') {
+  //       return;
+  //     }
+  //     console.log('captured')
+  //     if (userAnswer === answer && !isCorrect) {
+  //       setIsCorrect(true);
+  //       setNumberSolved(numberSolved + 1);
+  //     }
+  //     setIsAttempted(true);
+  //     (document.getElementById('next') as HTMLInputElement).focus();
+  //   };
+
+  //   // Add the event listener
+  //   const mathField = mf.current;
+  //   if (mathField) {
+  //     (mathField as HTMLElement).addEventListener('keydown', handleKeyPress);
+  //   }
+
+  //   // Clean up the event listener when the component unmounts
+  //   return () => {
+  //     if (mathField) {
+  //       (mathField as HTMLElement).addEventListener('keydown', handleKeyPress);
+  //     }
+  //   };
+  // }, []);
+
   return (
     <div className='flex flex-col h-screen'>
-      {/* navbar */}
+      <Script src='//unpkg.com/mathlive' />
       <Navbar title='Addition' />
 
       {/* counter */}
@@ -59,17 +111,25 @@ export default function AdditionPage() {
             <p>{numberSolved}</p>
       </div>
 
-      <div className='p-4 flex flex-col items-center justify-center grow gap-2 text-4xl font-bold'>
-        <div className='flex items-center justify-center gap-2 py-16'>
-          <p>{problem}</p>
-          <p> = </p>
-          <Input 
+      <div className='p-4 flex flex-col items-center justify-center gap-2 text-4xl font-normal'>
+        <div className='flex items-center justify-center gap-2 mt-32'>
+          <p className='text-3xl'>{'$$'+problem+'=$$'}</p>
+          <div>
+            <math-field
+              id='answer'
+              ref={mf}
+              onInput={(e: React.ChangeEvent<HTMLInputElement> ) => {setUserAnswer(e.target.value)}}
+            >
+              {userAnswer}
+            </math-field>
+          </div>
+          {/* <Input 
             id='answer' 
             type='number'
-            className={cn('text-4xl font-bold flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-32': 'w-24')}
+            className={cn('text-4xl font-normal flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-32': 'w-24')}
             onKeyDown={(e) => {
               // if key is enter
-              if (e.keyCode !== 13) {
+              if (e.key !== 'Enter') {
                 return;
               }
               const value = parseInt((document.getElementById('answer') as HTMLInputElement).value);
@@ -80,9 +140,31 @@ export default function AdditionPage() {
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
             }}
-          />
+          /> */}
+          <Button
+            onKeyDown={(e) => {
+              // if key is enter
+              if (e.key !== 'Enter') {
+                return;
+              }
+              if (parseInt(userAnswer) === answer && !isCorrect) {
+                setIsCorrect(true);
+                setNumberSolved(numberSolved + 1);
+              }
+              setIsAttempted(true);
+              (document.getElementById('next') as HTMLInputElement).focus();
+            }}
+            onClick={(e) => {
+              if (parseInt(userAnswer) === answer && !isCorrect) {
+                setIsCorrect(true);
+                setNumberSolved(numberSolved + 1);
+              }
+              setIsAttempted(true);
+              (document.getElementById('next') as HTMLInputElement).focus();
+            }}
+          >Submit</Button>
         </div>
-        <div className={cn('flex flex-col items-center gap-8', isAttempted? '': 'invisible')}>
+        <div className={cn('flex flex-col items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
           {isCorrect && <p>Correct!</p>}
           {!isCorrect && <p>Incorrect! Answer is {answer}.</p>}
           <Button 
