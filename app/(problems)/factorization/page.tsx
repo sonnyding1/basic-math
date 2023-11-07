@@ -10,12 +10,15 @@ import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
 import Navbar from '@/components/navbar';
 import Script from 'next/script';
+import { useXP } from '@/store/useXP';
+import { useLevel } from '@/store/useLevel';
+import { Progress } from '@/components/ui/progress';
 // import MathField from 'math-field';
 
 export default function FactorizationPage() {
   const [problem, setProblem] = useState('');
   const [answer, setAnswer] = useState('');
-  const [userAnswer, setUserAnswer] = useState('');
+  const [userAnswer, setUserAnswer] = useState('0');
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
 
@@ -24,6 +27,9 @@ export default function FactorizationPage() {
   const [numberSolved, setNumberSolved] = useState(0);
 
   const { userId } = useAuth();
+
+  const { xp, incrementXP, setXP } = useXP();
+  const { level, incrementLevel, setLevel } = useLevel();
 
   const typeset = (selector: () => HTMLElement) => {
     const mathJax = (window as any).MathJax;
@@ -48,12 +54,15 @@ export default function FactorizationPage() {
   // init
   const mf = useRef() as any;
   useEffect(() => {
-    async function getNumberSolved() {
-      const numberSolved = await axios.get('/api/solve-count');
-      setNumberSolved(numberSolved.data);
+    async function getFromDb() {
+      const response = await axios.get('/api/db');
+      const { numberSolved, level, xp } = response.data;
+      setNumberSolved(numberSolved);
+      setLevel(level);
+      setXP(xp);
     }
     if (userId) {
-      getNumberSolved();
+      getFromDb();
     }
 
     const { problemString, problemAnswer } = assignFactorizationProblem(includeNegative, includeTwoDigit);
@@ -65,12 +74,20 @@ export default function FactorizationPage() {
   // update number solved
   useEffect(() => {
     async function updateNumberSolved() {
-      await axios.post('/api/solve-count', { numberSolved });
+      await axios.post('/api/db', { numberSolved, level, xp });
     }
     if (userId && numberSolved > 0) {
       updateNumberSolved();
     }
-  }, [numberSolved]);
+  }, [numberSolved, level, xp]);
+
+  // update level
+  useEffect(() => {
+    if (xp >= level*1.25*20) {
+      incrementLevel(Math.floor(xp/(level*1.25*20)));
+      setXP(Math.floor(xp%(level*1.25*20)));
+    }
+  })
 
   // useEffect(() => {
   //   const handleKeyPress = (event: KeyboardEvent) => {
@@ -103,11 +120,20 @@ export default function FactorizationPage() {
   return (
     <div className='flex flex-col h-screen'>
       <Navbar title='Factorization' />
+      <Script src='//unpkg.com/mathlive' />
 
-      {/* counter */}
-      <div className='p-4 w-full align-right flex gap-2 text-xl'>
-            <p>Solve counts: </p>
-            <p>{numberSolved}</p>
+      <div className='p-4'>
+        {/* counter */}
+        <div className='w-full align-right flex gap-2'>
+              <p>Solve counts: </p>
+              <p>{numberSolved}</p>
+        </div>
+        {/* level bar */}
+        <div className='flex gap-4 items-center'>
+          <p>Level {level} </p>
+          <Progress value={Math.floor(xp/(level*1.25*20)*100)} className='w-32 h-2' />
+          <p>{xp} / {Math.floor(level*1.25*20)}</p>
+        </div>
       </div>
 
       <div className='p-4 flex flex-col items-center justify-center gap-2 text-4xl font-normal'>
@@ -149,6 +175,7 @@ export default function FactorizationPage() {
               if (evalFactorizationProblem(problem, userAnswer) && !isCorrect) {
                 setIsCorrect(true);
                 setNumberSolved(numberSolved + 1);
+                incrementXP(1); // TODO: increment xp by more?
               }
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
