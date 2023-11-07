@@ -14,7 +14,7 @@ import Script from 'next/script';
 export default function FactorizationPage() {
   const [problem, setProblem] = useState('');
   const [answer, setAnswer] = useState('');
-  const [userAnswer, setUserAnswer] = useState(0);
+  const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
 
@@ -102,7 +102,7 @@ export default function FactorizationPage() {
   return (
     <div className='flex flex-col h-screen'>
       <Script src='//unpkg.com/mathlive' />
-      <Navbar title='Addition' />
+      <Navbar title='Factorization' />
 
       {/* counter */}
       <div className='p-4 w-full align-right flex gap-2 text-xl'>
@@ -112,14 +112,17 @@ export default function FactorizationPage() {
 
       <div className='p-4 flex flex-col items-center justify-center gap-2 text-4xl font-normal'>
         <div className='flex items-center justify-center gap-2 mt-32'>
-          <p>{'$$'+problem+'=$$'}</p>
-          {/* <math-field
-            ref={mf}
-            onInput={(e: { target: { getValue: () => React.SetStateAction<number>; }; }) => {setUserAnswer(e.target.getValue())}}
-          >
-            {userAnswer}
-          </math-field> */}
-          <Input 
+          <p className='text-3xl'>{'$$'+problem+'=$$'}</p>
+          <div>
+            <math-field
+              id='answer'
+              ref={mf}
+              onInput={(e: { target: { getValue: () => React.SetStateAction<number>; }; }) => {setUserAnswer(e.target.getValue())}}
+            >
+              {userAnswer}
+            </math-field>
+          </div>
+          {/* <Input 
             id='answer' 
             type='string'
             className={cn('text-4xl font-normal flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-64': 'w-64')}
@@ -136,7 +139,29 @@ export default function FactorizationPage() {
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
             }}
-          />
+          /> */}
+          <Button
+            onKeyDown={(e) => {
+              // if key is enter
+              if (e.key !== 'Enter') {
+                return;
+              }
+              if (evalFactorizationProblem(problem, userAnswer) && !isCorrect) {
+                setIsCorrect(true);
+                setNumberSolved(numberSolved + 1);
+              }
+              setIsAttempted(true);
+              (document.getElementById('next') as HTMLInputElement).focus();
+            }}
+            onClick={(e) => {
+              if (evalFactorizationProblem(problem, userAnswer) && !isCorrect) {
+                setIsCorrect(true);
+                setNumberSolved(numberSolved + 1);
+              }
+              setIsAttempted(true);
+              (document.getElementById('next') as HTMLInputElement).focus();
+            }}
+          >Submit</Button>
         </div>
         <div className={cn('flex flex-col items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
           {isCorrect && <p className='my-2'>Correct!</p>}

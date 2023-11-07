@@ -31,10 +31,12 @@ export function assignFactorizationProblem(includeNegative: boolean, includeTwoD
 }
 
 export function evalFactorizationProblem(problemString: string, userAnswer: string) {
-  const regex = /^\(x[+-]\d+\)\*?\(x[+-]\d+\)$/;
-  if (!regex.test(userAnswer)) {
+  const processedAnswer = userAnswer.replace(/\\(left|right)/g, '');
+  const regex1 = /^\(x[+-]\d+\)\*?\(x[+-]\d+\)$/;
+  const regex2 = /^\(x[+-]\d+\)(\^\d+)?$/;
+  if (!regex1.test(processedAnswer) && !regex2.test(processedAnswer)) {
     return false;
   }
   const ce = new ComputeEngine();
-  return ce.parse(problemString).isEqual(ce.parse(userAnswer));
+  return ce.parse(problemString).isEqual(ce.parse(processedAnswer));
 }
