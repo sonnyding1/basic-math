@@ -240,7 +240,7 @@ export default function FactorizationPage() {
             setProblem(problemString);
             setAnswer(problemAnswer);
           }} />
-          <label htmlFor="include-negative">Include 2 digit numbers</label>
+          <label htmlFor="include-two-digit">Include 2 digit numbers</label>
         </div>
       </div>
     </div>
