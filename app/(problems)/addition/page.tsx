@@ -13,6 +13,7 @@ import Script from 'next/script';
 import { Progress } from '@/components/ui/progress';
 import { useXP } from '@/store/useXP';
 import { useLevel } from '@/store/useLevel';
+import { useNumberSolved } from '@/store/useNumberSolved';
 
 export default function AdditionPage() {
   const [problem, setProblem] = useState('');
@@ -23,10 +24,10 @@ export default function AdditionPage() {
 
   const [includeNegative, setIncludeNegative] = useState(false);
   const [includeTwoDigit, setIncludeTwoDigit] = useState(false);
-  const [numberSolved, setNumberSolved] = useState(0);
 
   const { userId } = useAuth();
 
+  const { numberSolved, incrementNumberSolved, setNumberSolved } = useNumberSolved();
   const { xp, incrementXP, setXP } = useXP();
   const { level, incrementLevel, setLevel } = useLevel();
 
@@ -174,7 +175,7 @@ export default function AdditionPage() {
               }
               if (parseInt(userAnswer) === answer && !isCorrect) {
                 setIsCorrect(true);
-                setNumberSolved(numberSolved + 1);
+                incrementNumberSolved();
                 incrementXP(1); // TODO: increment xp by more?
               }
               setIsAttempted(true);
@@ -183,7 +184,7 @@ export default function AdditionPage() {
             onClick={(e) => {
               if (parseInt(userAnswer) === answer && !isCorrect) {
                 setIsCorrect(true);
-                setNumberSolved(numberSolved + 1);
+                incrementNumberSolved();
               }
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
