@@ -138,7 +138,7 @@ export default function AdditionPage() {
       </div>
 
       <div className='p-4 flex flex-col items-center justify-center gap-2 text-4xl font-normal'>
-        <div className='flex items-center justify-center gap-2 mt-32'>
+        <div className='flex flex-col md:flex-row items-center justify-center gap-2 mt-32'>
           <p className='text-3xl'>{'$$'+problem+'=$$'}</p>
           <div>
             <math-field
