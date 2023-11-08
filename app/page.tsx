@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { assignAdditionProblem } from '@/lib/problems';
+import { additionWeight, assignAdditionProblem } from '@/lib/problems';
 import { cn } from '@/lib/utils';
 import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
@@ -176,7 +176,7 @@ export default function AdditionPage() {
               if (parseInt(userAnswer) === answer && !isCorrect) {
                 setIsCorrect(true);
                 incrementNumberSolved();
-                incrementXP(1); // TODO: increment xp by more?
+                incrementXP(additionWeight(includeNegative, includeTwoDigit));
               }
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
@@ -185,6 +185,7 @@ export default function AdditionPage() {
               if (parseInt(userAnswer) === answer && !isCorrect) {
                 setIsCorrect(true);
                 incrementNumberSolved();
+                incrementXP(additionWeight(includeNegative, includeTwoDigit));
               }
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
@@ -234,7 +235,7 @@ export default function AdditionPage() {
             setProblem(problemString);
             setAnswer(problemAnswer);
           }} />
-          <label htmlFor="include-negative">Include 2 digit numbers</label>
+          <label htmlFor="include-two-digit">Include 2 digit numbers</label>
         </div>
       </div>
     </div>
