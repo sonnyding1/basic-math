@@ -40,3 +40,25 @@ export function evalFactorizationProblem(problemString: string, userAnswer: stri
   const ce = new ComputeEngine();
   return ce.parse(problemString).isEqual(ce.parse(processedAnswer));
 }
+
+export function additionWeight(includeNegative: boolean, includeTwoDigit: boolean) {
+  var weight = 1;
+  if (includeNegative) {
+    weight += 1;
+  }
+  if (includeTwoDigit) {
+    weight += 2;
+  }
+  return weight;
+}
+
+export function factorizationWeight(includeNegative: boolean, includeTwoDigit: boolean) {
+  var weight = 4;
+  if (includeNegative) {
+    weight += 4;
+  }
+  if (includeTwoDigit) {
+    weight += 8;
+  }
+  return weight;
+}

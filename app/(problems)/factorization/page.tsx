@@ -4,7 +4,7 @@ import axios from 'axios';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
-import { assignFactorizationProblem, evalFactorizationProblem } from '@/lib/problems';
+import { assignFactorizationProblem, evalFactorizationProblem, factorizationWeight } from '@/lib/problems';
 import { cn } from '@/lib/utils';
 import { UserButton, useAuth } from '@clerk/nextjs';
 import React, { useEffect, useRef, useState } from 'react';
@@ -176,7 +176,7 @@ export default function FactorizationPage() {
               if (evalFactorizationProblem(problem, userAnswer) && !isCorrect) {
                 setIsCorrect(true);
                 incrementNumberSolved();
-                incrementXP(1); // TODO: increment xp by more?
+                incrementXP(factorizationWeight(includeNegative, includeTwoDigit));
               }
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
@@ -185,6 +185,7 @@ export default function FactorizationPage() {
               if (evalFactorizationProblem(problem, userAnswer) && !isCorrect) {
                 setIsCorrect(true);
                 incrementNumberSolved();
+                incrementXP(factorizationWeight(includeNegative, includeTwoDigit));
               }
               setIsAttempted(true);
               (document.getElementById('next') as HTMLInputElement).focus();
