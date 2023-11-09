@@ -18,7 +18,7 @@ import { useNumberSolved } from '@/store/useNumberSolved';
 export default function AdditionPage() {
   const [problem, setProblem] = useState('');
   const [answer, setAnswer] = useState(0);
-  const [userAnswer, setUserAnswer] = useState('0');
+  const [userAnswer, setUserAnswer] = useState('');
   const [isCorrect, setIsCorrect] = useState(false);
   const [isAttempted, setIsAttempted] = useState(false);
 
@@ -89,35 +89,7 @@ export default function AdditionPage() {
       setXP(Math.floor(xp%(level*1.25*20)));
     }
   })
-
-  // useEffect(() => {
-  //   const handleKeyPress = (event: KeyboardEvent) => {
-  //     if (event.key !== 'Enter') {
-  //       return;
-  //     }
-  //     console.log('captured')
-  //     if (userAnswer === answer && !isCorrect) {
-  //       setIsCorrect(true);
-  //       setNumberSolved(numberSolved + 1);
-  //     }
-  //     setIsAttempted(true);
-  //     (document.getElementById('next') as HTMLInputElement).focus();
-  //   };
-
-  //   // Add the event listener
-  //   const mathField = mf.current;
-  //   if (mathField) {
-  //     (mathField as HTMLElement).addEventListener('keydown', handleKeyPress);
-  //   }
-
-  //   // Clean up the event listener when the component unmounts
-  //   return () => {
-  //     if (mathField) {
-  //       (mathField as HTMLElement).addEventListener('keydown', handleKeyPress);
-  //     }
-  //   };
-  // }, []);
-
+  
   return (
     <div className='flex flex-col h-screen'>
       <Script src='//unpkg.com/mathlive' />
@@ -144,71 +116,39 @@ export default function AdditionPage() {
             <math-field
               id='answer'
               ref={mf}
-              onInput={(e: React.ChangeEvent<HTMLInputElement> ) => {setUserAnswer(e.target.value)}}
+              onInput={(e: React.ChangeEvent<HTMLInputElement> ) => {
+                setUserAnswer(e.target.value);
+              }}
             >
               {userAnswer}
             </math-field>
           </div>
-          {/* <Input 
-            id='answer' 
-            type='number'
-            className={cn('text-4xl font-normal flex-grow-0 flex-shrink-1', includeTwoDigit? 'w-32': 'w-24')}
-            onKeyDown={(e) => {
-              // if key is enter
-              if (e.key !== 'Enter') {
-                return;
-              }
-              const value = parseInt((document.getElementById('answer') as HTMLInputElement).value);
-              if (value === answer && !isCorrect) {
-                setIsCorrect(true);
-                setNumberSolved(numberSolved + 1);
-              }
-              setIsAttempted(true);
-              (document.getElementById('next') as HTMLInputElement).focus();
-            }}
-          /> */}
           <Button
-            onKeyDown={(e) => {
-              // if key is enter
-              if (e.key !== 'Enter') {
-                return;
-              }
-              if (parseInt(userAnswer) === answer && !isCorrect) {
-                setIsCorrect(true);
-                incrementNumberSolved();
-                incrementXP(additionWeight(includeNegative, includeTwoDigit));
-              }
-              setIsAttempted(true);
-              (document.getElementById('next') as HTMLInputElement).focus();
-            }}
             onClick={(e) => {
-              if (parseInt(userAnswer) === answer && !isCorrect) {
-                setIsCorrect(true);
-                incrementNumberSolved();
-                incrementXP(additionWeight(includeNegative, includeTwoDigit));
+              if (!isAttempted) {
+                // state 1: not attempted
+                if (parseInt(userAnswer) === answer && !isCorrect) {
+                  setIsCorrect(true);
+                  incrementNumberSolved();
+                  incrementXP(additionWeight(includeNegative, includeTwoDigit));
+                }
+                setIsAttempted(true);
+              } else {
+                // state 2: attempted
+                const { problemString, problemAnswer } = assignAdditionProblem(includeNegative, includeTwoDigit);
+                setProblem(problemString);
+                setAnswer(problemAnswer);
+                (document.getElementById('answer') as HTMLInputElement).value = '';
+                setIsCorrect(false);
+                setIsAttempted(false);
+                (document.getElementById('answer') as HTMLInputElement).focus();
               }
-              setIsAttempted(true);
-              (document.getElementById('next') as HTMLInputElement).focus();
             }}
-          >Submit</Button>
+          >{isAttempted ? 'Next' : 'Submit'}</Button>
         </div>
-        <div className={cn('flex flex-col items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
+        <div className={cn('items-center text-xl font-normal gap-2', isAttempted? '': 'invisible')}>
           {isCorrect && <p>Correct!</p>}
           {!isCorrect && <p>Incorrect! Answer is {answer}.</p>}
-          <Button 
-            id='next'
-            variant='outline'
-            onClick={() => {
-              const { problemString, problemAnswer } = assignAdditionProblem(includeNegative, includeTwoDigit);
-              setProblem(problemString);
-              setAnswer(problemAnswer);
-              (document.getElementById('answer') as HTMLInputElement).value = '';
-              setIsCorrect(false);
-              setIsAttempted(false);
-              (document.getElementById('answer') as HTMLInputElement).focus();
-          }}>
-            Next
-          </Button>
         </div>
       </div>
 
