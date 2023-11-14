@@ -17,6 +17,10 @@ const routes = [
         path: '/addition'
     },
     {
+        name: 'Multiplication',
+        path: '/multiplication'
+    },
+    {
         name: 'Factorization',
         path: '/factorization'
     }
