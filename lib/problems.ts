@@ -51,6 +51,32 @@ export function multiplicationWeight(includeNegative: boolean, includeTwoDigit: 
   return weight;
 }
 
+export function assignDivisionProblem(includeNegative: boolean, includeTwoDigit: boolean) {
+  var sign = 1;
+  const range = includeTwoDigit ? 99 : 9;
+  sign = includeNegative && Math.random() > 0.5 ? -1 : 1;
+  const a = Math.floor((Math.random() * range + 1) * sign); // +1 because avoid 0
+  sign = includeNegative && Math.random() > 0.5 ? -1 : 1;
+  const b = Math.floor(Math.random() * range * sign);
+  const c = a * b;
+  var problemString = `${c} / ${a}`;
+  const problemAnswer = b;
+  problemString = problemString.replace(/(\d+)\s*\/\s*-(\d+)/g, "$1 / (-$2)");
+  problemString = problemString.replace(/\//g, "\\div");
+  return { problemString, problemAnswer };
+}
+
+export function divisionWeight(includeNegative: boolean, includeTwoDigit: boolean) {
+  var weight = 1;
+  if (includeNegative) {
+    weight += 1;
+  }
+  if (includeTwoDigit) {
+    weight += 2;
+  }
+  return weight;
+}
+
 export function assignFactorizationProblem(includeNegative: boolean, includeTwoDigit: boolean) {
   var sign = 1;
   const range = includeTwoDigit ? 99 : 9;
